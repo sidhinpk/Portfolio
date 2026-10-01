@@ -1,4 +1,5 @@
 // Footer year
+
 document.getElementById('year').textContent = new Date().getFullYear();
 
 // Mobile menu
@@ -44,7 +45,7 @@ document.querySelectorAll('[data-count]').forEach(el => counterIO.observe(el));
 // Nav state, active link, back-to-top
 const nav = document.getElementById('nav');
 const topBtn = document.getElementById('top');
-const links = [...document.querySelectorAll('nav a')];
+const links = [...document.querySelectorAll('nav a[href^="#"]')];
 const sections = links.map(a => document.querySelector(a.getAttribute('href')));
 window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', scrollY > 20);
