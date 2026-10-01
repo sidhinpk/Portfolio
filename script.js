@@ -67,13 +67,51 @@ document.querySelectorAll('.cert-grid img').forEach(img => {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelector('.lightbox')?.remove(); });
 
 // Contact form: opens the visitor's email app with the message filled in
-document.getElementById('form').addEventListener('submit', e => {
+// document.getElementById('form').addEventListener('submit', e => {
+//   e.preventDefault();
+//   const name = document.getElementById('name').value.trim();
+//   const email = document.getElementById('email').value.trim();
+//   const msg = document.getElementById('msg').value.trim();
+//   const subject = encodeURIComponent(`Portfolio enquiry from ${name}`);
+//   const body = encodeURIComponent(`${msg}\n\nFrom: ${name} (${email})`);
+//   location.href = `mailto:sidhinpk07@gmail.com?subject=${subject}&body=${body}`;
+//   document.getElementById('status').textContent = 'Opening your email app…';
+// });
+
+// Contact form: sends the message to your inbox via Web3Forms
+document.getElementById('form').addEventListener('submit', async e => {
   e.preventDefault();
-  const name = document.getElementById('name').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const msg = document.getElementById('msg').value.trim();
-  const subject = encodeURIComponent(`Portfolio enquiry from ${name}`);
-  const body = encodeURIComponent(`${msg}\n\nFrom: ${name} (${email})`);
-  location.href = `mailto:sidhinpk07@gmail.com?subject=${subject}&body=${body}`;
-  document.getElementById('status').textContent = 'Opening your email app…';
+  const status = document.getElementById('status');
+  const btn = e.target.querySelector('button[type="submit"]');
+
+  btn.disabled = true;
+  status.textContent = 'Sending…';
+
+  const payload = {
+    access_key: '3f4707cf-f6b5-4774-b204-5370a1afd17e',
+    subject: `Portfolio enquiry from ${document.getElementById('name').value.trim()}`,
+    name: document.getElementById('name').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    message: document.getElementById('msg').value.trim()
+  };
+
+  try {
+    const res = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      status.textContent = 'Thank you! Your message has been sent.';
+      e.target.reset();
+    } else {
+      status.textContent = 'Something went wrong. Please try again or email me directly.';
+    }
+  } catch (err) {
+    status.textContent = 'Network error. Please try again later.';
+  } finally {
+    btn.disabled = false;
+  }
 });
